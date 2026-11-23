@@ -45,7 +45,8 @@ def system_prompt():
 
 def ask_ai(history):
     """Yields text chunks. Replaced in tests."""
-    client = genai.Client()  # reads GEMINI_API_KEY
+    # strip(): keys pasted into dashboards often carry a trailing newline/space
+    client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY", "").strip() or None)
     contents = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
                 for m in history]
     for chunk in client.models.generate_content_stream(
@@ -132,7 +133,7 @@ class Handler(BaseHTTPRequestHandler):
         except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             pass  # user pressed Stop / closed the tab: keep the partial answer
         except Exception as e:  # API errors, missing/invalid key, network
-            print("ask_ai failed:", repr(e))
+            print("ask_ai failed:", repr(e), flush=True)
             err = f"\n\n⚠️ AI service error: {e.__class__.__name__}. Check the server log / API key."
             reply += err
             self.wfile.write(err.encode())
