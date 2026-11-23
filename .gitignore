@@ -1,0 +1,4 @@
+vedai.db
+__pycache__/
+.claude/
+.env

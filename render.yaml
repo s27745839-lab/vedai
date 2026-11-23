@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: vedai
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false   # Render asks you to paste it on first deploy
+      - key: PYTHON_VERSION
+        value: 3.13.5
